@@ -12,30 +12,37 @@ git clone https://github.com/gotsanity/checkpoint-skill.git
 
 ### Global (all projects)
 
-Copy or symlink each skill directory into `~/.claude/skills/`:
+Copy each skill directory into `~/.claude/skills/`:
 
 ```bash
 # Linux/macOS
-for skill in checkpoint checkpoint-archive checkpoint-defer checkpoint-list checkpoint-note checkpoint-resume; do
-  ln -s /path/to/checkpoint-skill/$skill ~/.claude/skills/$skill
-done
+cp -r checkpoint checkpoint-archive checkpoint-defer checkpoint-list checkpoint-note checkpoint-resume ~/.claude/skills/
 
-# Windows (run as Administrator)
-for %s in (checkpoint checkpoint-archive checkpoint-defer checkpoint-list checkpoint-note checkpoint-resume) do mklink /J "%USERPROFILE%\.claude\skills\%s" "C:\path\to\checkpoint-skill\%s"
+# Windows
+xcopy checkpoint "%USERPROFILE%\.claude\skills\checkpoint" /E /I
+xcopy checkpoint-archive "%USERPROFILE%\.claude\skills\checkpoint-archive" /E /I
+xcopy checkpoint-defer "%USERPROFILE%\.claude\skills\checkpoint-defer" /E /I
+xcopy checkpoint-list "%USERPROFILE%\.claude\skills\checkpoint-list" /E /I
+xcopy checkpoint-note "%USERPROFILE%\.claude\skills\checkpoint-note" /E /I
+xcopy checkpoint-resume "%USERPROFILE%\.claude\skills\checkpoint-resume" /E /I
 ```
 
 ### Per-project
 
-Copy or symlink into your project's `.claude/skills/` directory:
+Copy into your project's `.claude/skills/` directory:
 
 ```bash
 # Linux/macOS
-for skill in checkpoint checkpoint-archive checkpoint-defer checkpoint-list checkpoint-note checkpoint-resume; do
-  ln -s /path/to/checkpoint-skill/$skill .claude/skills/$skill
-done
-```
+cp -r checkpoint checkpoint-archive checkpoint-defer checkpoint-list checkpoint-note checkpoint-resume /path/to/project/.claude/skills/
 
-Or add as a git submodule and symlink from there.
+# Windows
+xcopy checkpoint "C:\path\to\project\.claude\skills\checkpoint" /E /I
+xcopy checkpoint-archive "C:\path\to\project\.claude\skills\checkpoint-archive" /E /I
+xcopy checkpoint-defer "C:\path\to\project\.claude\skills\checkpoint-defer" /E /I
+xcopy checkpoint-list "C:\path\to\project\.claude\skills\checkpoint-list" /E /I
+xcopy checkpoint-note "C:\path\to\project\.claude\skills\checkpoint-note" /E /I
+xcopy checkpoint-resume "C:\path\to\project\.claude\skills\checkpoint-resume" /E /I
+```
 
 ## Usage
 
