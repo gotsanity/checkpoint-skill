@@ -19,7 +19,32 @@ Each skill is a standalone `SKILL.md` with YAML frontmatter (name, description, 
 
 - Active checkpoints: `.checkpoints/`
 - Archived checkpoints: `.checkpoints/archive/`
+- Checkpoint index: `.checkpoints/index.json`
 - One file per checkpoint: `{slug}-{YYYYMMDD-HHmmss}.json`
+
+## Index Schema
+
+The index is the source of truth for which checkpoints exist and their current state. Skills read the index instead of scanning the directory. Archived checkpoints are pruned from the index.
+
+```json
+{
+  "version": 1,
+  "last_active": "checkpoint-id or null",
+  "checkpoints": [
+    {
+      "id": "auth-refactor-20260329-140000",
+      "name": "auth-refactor",
+      "status": "active | resumed | deferred",
+      "summary": "one-line summary",
+      "created": "ISO-8601",
+      "updated": "ISO-8601",
+      "file": "auth-refactor-20260329-140000.json"
+    }
+  ]
+}
+```
+
+If `index.json` is missing, rebuild it by scanning `.checkpoints/*.json`.
 
 ## Checkpoint Schema
 
