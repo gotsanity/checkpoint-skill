@@ -161,6 +161,16 @@ After writing the checkpoint file, update `index.json`:
 - **New checkpoint**: add an entry to `checkpoints` array and set `last_active` to this checkpoint's ID.
 - **Updated checkpoint**: update the matching entry's `summary`, `status`, and `updated` fields. Set `last_active` to this checkpoint's ID.
 
+Also write `.checkpoints/session.json` to track the current session:
+```json
+{
+  "checkpoint_id": "<checkpoint-id>",
+  "name": "<checkpoint-name>",
+  "summary": "<one-line summary>",
+  "started_at": "<ISO-8601 timestamp>"
+}
+```
+
 ```json
 {
   "id": "{slug}-{YYYYMMDD-HHmmss}",

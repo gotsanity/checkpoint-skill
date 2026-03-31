@@ -73,6 +73,21 @@ If `index.json` is missing, rebuild it by scanning `.checkpoints/*.json`.
 }
 ```
 
+## Session File
+
+`.checkpoints/session.json` tracks the checkpoint currently in use. Written by `checkpoint` (on create/update) and `checkpoint-resume` (on resume). Cleared by `checkpoint-archive` and `checkpoint-defer`.
+
+```json
+{
+  "checkpoint_id": "auth-refactor-20260329-140000",
+  "name": "auth-refactor",
+  "summary": "one-line summary",
+  "started_at": "ISO-8601"
+}
+```
+
+When cleared, write `null` values: `{"checkpoint_id": null, "name": null, "summary": null, "started_at": null}`.
+
 ## Lifecycle
 
 `active` → `resumed` → `archived` or `deferred` → `resumed` (re-resumable)

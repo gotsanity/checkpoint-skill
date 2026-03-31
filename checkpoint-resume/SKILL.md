@@ -39,7 +39,17 @@ Then update `index.json`:
 - Set the matching entry's `status` to `"resumed"` and update its `updated` field.
 - Set `last_active` to this checkpoint's ID.
 
-Complete both the checkpoint file update and the index update before producing any output.
+Also write `.checkpoints/session.json` to track the current session:
+```json
+{
+  "checkpoint_id": "<checkpoint-id>",
+  "name": "<checkpoint-name>",
+  "summary": "<one-line summary>",
+  "started_at": "<ISO-8601 timestamp>"
+}
+```
+
+Complete the checkpoint file update, index update, and session file write before producing any output.
 
 ## Step 3: Present and Orient
 

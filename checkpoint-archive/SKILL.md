@@ -23,6 +23,6 @@ Read `.checkpoints/index.json` instead of scanning the directory. If `index.json
 
 1. **If an argument was provided**, find the matching entry in the index by ID or name. If not, present non-archived entries from the index and prompt the user to select one via AskUserQuestion. If prompting, the question must be the only output in that response — no tool calls in the same turn.
 
-2. **Update and move** — Read the checkpoint file, set `"status": "archived"`, update the `updated` timestamp, and move the file to `.checkpoints/archive/` (creating the directory if needed). Then update `index.json`: remove the entry from the `checkpoints` array. If `last_active` pointed to this checkpoint, set it to `null`. Do not output anything during this step.
+2. **Update and move** — Read the checkpoint file, set `"status": "archived"`, update the `updated` timestamp, and move the file to `.checkpoints/archive/` (creating the directory if needed). Then update `index.json`: remove the entry from the `checkpoints` array. If `last_active` pointed to this checkpoint, set it to `null`. Also clear `.checkpoints/session.json` if its `checkpoint_id` matches the archived checkpoint — write `{"checkpoint_id": null, "name": null, "summary": null, "started_at": null}`. Do not output anything during this step.
 
 3. **Confirm** — after all file operations are complete, tell the user which checkpoint was archived and where it now lives. This must be the final output.
