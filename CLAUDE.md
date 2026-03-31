@@ -95,3 +95,5 @@ When cleared, write `null` values: `{"checkpoint_id": null, "name": null, "summa
 Checkpoints with status `active` and no update for 14 days are flagged stale.
 
 ## Guardrails
+
+- **Append-only updates**: When updating an existing checkpoint, never remove, replace, condense, or summarize prior entries. All array fields are appended to. Text fields (`objective`, `current_hypothesis`) preserve the original in full with the update appended below a timestamp header. Only a user may explicitly request condensing or removing information.

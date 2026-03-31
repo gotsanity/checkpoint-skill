@@ -153,7 +153,7 @@ This gives the user a chance to ensure specific details they find important are 
 
 Create `.checkpoints/` if it doesn't exist.
 
-**If updating an existing checkpoint**: append new entries to each section, update the objective and hypothesis if they evolved, add new referenced files, update `updated` timestamp, keep original `created` and `id`, add an entry to `resume_history`.
+**If updating an existing checkpoint**: updates are strictly append-only. Never remove, replace, condense, or summarize existing entries — prior information must remain exactly as written. For each array field (`decisions`, `facts`, `open_questions`, `constraints`, `referenced_files`, `scratchpad`), append new entries to the end of the existing array. For `objective` and `current_hypothesis`, append the new state below the existing text separated by a blank line and a timestamp header (e.g., `\n\n[Updated YYYY-MM-DD HH:MM]\n`), preserving the original in full. Update `updated` timestamp, keep original `created` and `id`, add an entry to `resume_history`. Only a user may explicitly request condensing or removing prior entries.
 
 **If creating new**: write `{id}.json` with the structure below.
 
