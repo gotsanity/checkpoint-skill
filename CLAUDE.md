@@ -10,6 +10,7 @@ checkpoint-skill/
 ├── checkpoint-note/SKILL.md   — Add a note to a checkpoint's scratchpad
 ├── checkpoint-archive/SKILL.md— Archive a completed checkpoint
 ├── checkpoint-defer/SKILL.md  — Pause a checkpoint without archiving
+├── checkpoint-config/SKILL.md — Configure hooks, permissions, and setup
 └── README.md
 ```
 

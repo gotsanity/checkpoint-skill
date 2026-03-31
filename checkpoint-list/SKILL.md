@@ -3,72 +3,16 @@ name: checkpoint-list
 description: >
   List all saved checkpoints with their status, summary, and age.
   Use when the user wants to see what checkpoints exist, check status, or browse saved context.
-allowed-tools: Bash,Read,Glob,Write,AskUserQuestion
+allowed-tools: Bash,Read,Glob
 ---
 
 # Checkpoint List
 
 Display all checkpoints from the index. For archived checkpoints, scan `.checkpoints/archive/`.
 
-## Step 0: Session Start Hook Offer
+## Step 0: Configuration Guard
 
-This step offers to install a SessionStart hook so checkpoints are surfaced automatically at the start of each session. Run it once per project — skip entirely if either condition is true:
-
-- `.checkpoints/.hook-offered` exists
-- The target `settings.json` (see scope below) already contains a SessionStart hook with `checkpoint-session-start` in its command string
-
-### Scope Detection
-
-Check where this skill is installed to determine where the hook and settings entry belong:
-
-| Installed at | Hook script path | Settings file |
-|---|---|---|
-| `.claude/skills/checkpoint-list/` (project) | `.claude/hooks/checkpoint-session-start.sh` | `.claude/settings.json` |
-| `~/.claude/skills/checkpoint-list/` (global) | `~/.claude/hooks/checkpoint-session-start.sh` | `~/.claude/settings.json` |
-
-Detect scope by checking which path contains this skill's `SKILL.md`. If both exist, prefer project-level.
-
-### Ask
-
-Use AskUserQuestion: **"Would you like to see your checkpoint list automatically when starting a new session? This will add a SessionStart hook and allow the checkpoint-list skill to run without a permission prompt."**
-
-- **Yes** — install the hook and add skill permission (see below)
-- **No** — skip installation
-
-After the user responds either way, create `.checkpoints/.hook-offered` (and `.checkpoints/` if needed) so the question is never repeated for this project.
-
-### Install (Yes only)
-
-1. **Create the hook script** at the scope-appropriate path (create parent directories if needed):
-
-   ```bash
-   #!/bin/bash
-   if [ -f ".checkpoints/index.json" ]; then
-     if grep -q '"id"' .checkpoints/index.json 2>/dev/null; then
-       echo "[REQUIRED] Invoke /checkpoint-list before responding to the user."
-     fi
-   fi
-   ```
-
-2. **Update settings.json** — Read the existing file (or start with `{}` if absent). Preserve all existing content and make two additions:
-
-   **Add the SessionStart hook** — append to the `hooks.SessionStart` array (create `hooks` and `SessionStart` keys if missing). Each entry requires a `matcher` (empty string to match all) and a `hooks` array:
-
-   ```json
-   {
-     "matcher": "",
-     "hooks": [
-       {
-         "type": "command",
-         "command": "bash \"<absolute-path-to-hook-script>\""
-       }
-     ]
-   }
-   ```
-
-   **Add the skill permission** — append `"Skill(checkpoint-list)"` to the `permissions.allow` array (create `permissions` and `allow` keys if missing). Do not add it if it already exists.
-
-   Use the absolute path to the hook script (resolve `~` and relative paths).
+If `.checkpoints/.hook-offered` does not exist, invoke `/checkpoint-config` before proceeding. Wait for it to complete, then continue with the flow below.
 
 ## Output Ordering
 
