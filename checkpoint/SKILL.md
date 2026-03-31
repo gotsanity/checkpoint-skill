@@ -42,6 +42,64 @@ All checkpoint skills use `.checkpoints/index.json` as the single source of trut
 - Archived checkpoints are pruned from the index (they still exist in `.checkpoints/archive/`).
 - If `index.json` does not exist, rebuild it by scanning `.checkpoints/*.json` for non-archived checkpoint files, reading their `id`, `name`, `status`, `metadata.summary`, `created`, `updated`, and filename. Write the rebuilt index, then proceed normally.
 
+## Step 0: Session Start Hook Offer
+
+This step offers to install a SessionStart hook so checkpoints are surfaced automatically at the start of each session. Run it once per project — skip entirely if either condition is true:
+
+- `.checkpoints/.hook-offered` exists
+- The target `settings.json` (see scope below) already contains a SessionStart hook with `checkpoint-session-start` in its command string
+
+### Scope Detection
+
+Check where this skill is installed to determine where the hook and settings entry belong:
+
+| Installed at | Hook script path | Settings file |
+|---|---|---|
+| `.claude/skills/checkpoint/` (project) | `.claude/hooks/checkpoint-session-start.sh` | `.claude/settings.json` |
+| `~/.claude/skills/checkpoint/` (global) | `~/.claude/hooks/checkpoint-session-start.sh` | `~/.claude/settings.json` |
+
+Detect scope by checking which path contains this skill's `SKILL.md`. If both exist, prefer project-level.
+
+### Ask
+
+Use AskUserQuestion: **"Would you like to see your checkpoint list automatically when starting a new session? This will add a SessionStart hook and allow the checkpoint-list skill to run without a permission prompt."**
+
+- **Yes** — install the hook and add skill permission (see below)
+- **No** — skip installation
+
+After the user responds either way, create `.checkpoints/.hook-offered` (and `.checkpoints/` if needed) so the question is never repeated for this project.
+
+### Install (Yes only)
+
+1. **Create the hook script** at the scope-appropriate path (create parent directories if needed):
+
+   ```bash
+   #!/bin/bash
+   if [ -f ".checkpoints/index.json" ]; then
+     if grep -q '"id"' .checkpoints/index.json 2>/dev/null; then
+       echo "[REQUIRED] Invoke /checkpoint-list before responding to the user."
+     fi
+   fi
+   ```
+
+2. **Update settings.json** — Read the existing file (or start with `{}` if absent). Preserve all existing content and make two additions:
+
+   **Add the SessionStart hook** — append to the `hooks.SessionStart` array (create `hooks` and `SessionStart` keys if missing). Each entry requires a `matcher` (empty string to match all) and a `hooks` array:
+
+   ```json
+   {
+     "matcher": "",
+     "hooks": [
+       {
+         "type": "command",
+         "command": "bash \"<absolute-path-to-hook-script>\""
+       }
+     ]
+   }
+   ```
+
+   **Add the skill permission** — append `"Skill(checkpoint-list)"` to the `permissions.allow` array (create `permissions` and `allow` keys if missing). Do not add it if it already exists.
+
 ## Step 1: Load Index and Detect Resume State
 
 Read `.checkpoints/index.json`. If it doesn't exist, rebuild it (see Index section above).

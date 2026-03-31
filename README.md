@@ -106,6 +106,17 @@ Checkpoints are saved as JSON files in `.checkpoints/` in your working directory
 
 Checkpoints with status `active` and no updates for 14 days are flagged as stale.
 
+## Session Start Hook
+
+The first time you run `/checkpoint` or `/checkpoint-list`, the skill will ask if you'd like to see your checkpoints automatically at the start of each session. If you accept, it installs a `SessionStart` hook and adds a `Skill(checkpoint-list)` permission entry to your `settings.json` (project-level or global, matching how you installed the skills).
+
+If your project has a `CLAUDE.md` with a heavy startup protocol (multi-file reads, task loading, etc.), the hook may compete for priority. For a guaranteed trigger, add `/checkpoint-list` directly to your `CLAUDE.md` session start section:
+
+```markdown
+## On Session Start
+- Run /checkpoint-list to show saved checkpoints
+```
+
 ## Example Workflow
 
 ```
