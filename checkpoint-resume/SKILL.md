@@ -30,6 +30,8 @@ If the index has no checkpoints, tell the user there are none to resume.
 
 ## Step 2: Load and Mark as Resumed (silent — no output to user)
 
+Before resuming the selected checkpoint, check the index for any other entry with `"status": "resumed"`. If one exists (and it's not the checkpoint being resumed), set its status back to `"active"` in both the index entry and its checkpoint file.
+
 Read the selected checkpoint file (path from index: `.checkpoints/{file}`). Then immediately update it:
 - Set `"status": "resumed"`
 - Add to `resume_history`: `{"resumed_at": "ISO-8601", "resumed_by": "agent"}`
